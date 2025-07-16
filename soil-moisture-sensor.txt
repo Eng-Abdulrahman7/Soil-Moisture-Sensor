@@ -1,0 +1,36 @@
+int moisturePin = A0;  // Analog pin for the moisture sensor
+int ledPin = 13;       // LED pin on Pin 13
+int switchPin = 2;     // Switch pin on Pin 2
+int moistureValue = 0; // Value read from the sensor
+int threshold = 500;   // Threshold to activate the LED (you can adjust it as needed)
+int switchState = 0;   // State of the switch
+
+void setup() {
+  pinMode(ledPin, OUTPUT);  // Set the LED as an output
+  pinMode(switchPin, INPUT_PULLUP);  // Set the switch as an input with an internal pull-up resistor
+  Serial.begin(9600);       // Start serial communication to display data
+}
+
+void loop() {
+  // Read the state of the switch (LOW if turned on)
+  switchState = digitalRead(switchPin);
+
+  // If the switch is in the ON position (LOW state)
+  if (switchState == LOW) {
+    // Read the moisture value
+    moistureValue = analogRead(moisturePin);
+    Serial.print("Soil Moisture: ");
+    Serial.println(moistureValue);
+
+    // If the soil is dry (below the threshold), turn on the LED
+    if (moistureValue < threshold) {
+      digitalWrite(ledPin, HIGH);  // Turn on the LED if the soil is dry
+    } else {
+      digitalWrite(ledPin, LOW);   // Turn off the LED if the soil is moist
+    }
+  } else {
+    digitalWrite(ledPin, LOW);   // Turn off the LED if the switch is in the OFF position
+  }
+
+  delay(1000);  // Delay for 1 second before checking again
+}
